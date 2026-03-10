@@ -2,20 +2,20 @@
  * Слой абстракции данных (Data Layer).
  * ИНТЕГРАЦИЯ SUPABASE
  */
-
 // Supabase JS клиент загружается глобально через CDN в index.html и admin.html
 // window.supabase - это глобальный объект клиента
 
 const SUPABASE_URL = 'https://rvswpgsxutfcpgvmzonr.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2c3dwZ3N4dXRmY3Bndm16b25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ1MTEsImV4cCI6MjA4ODY2MDUxMX0.I_XagunD2zgTVmpaOrt4SvbJbJFHAJAd2j7JpYb26oY'
-  ';
+// ИСПРАВЛЕНИЕ 1: Убрана лишняя строчка и кавычка в ключе
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2c3dwZ3N4dXRmY3Bndm16b25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ1MTEsImV4cCI6MjA4ODY2MDUxMX0.I_XagunD2zgTVmpaOrt4SvbJbJFHAJAd2j7JpYb26oY';
 
 // Инициализация Supabase клиента (объект supabaseClt)
-export const supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ИСПРАВЛЕНИЕ 2: Убрано слово 'export' везде
+const supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- АВТОРИЗАЦИЯ (AUTH) ---
 
-export const register = async (email, password, name) => {
+const register = async (email, password, name) => {
   const { data, error } = await supabaseClt.auth.signUp({
     email,
     password,
@@ -27,7 +27,7 @@ export const register = async (email, password, name) => {
   return data;
 };
 
-export const login = async (email, password) => {
+const login = async (email, password) => {
   const { data, error } = await supabaseClt.auth.signInWithPassword({
     email,
     password
@@ -36,19 +36,19 @@ export const login = async (email, password) => {
   return data;
 };
 
-export const logout = async () => {
+const logout = async () => {
   const { error } = await supabaseClt.auth.signOut();
   if (error) throw error;
 };
 
-export const getSession = async () => {
+const getSession = async () => {
   const { data: { session }, error } = await supabaseClt.auth.getSession();
   if (error) throw error;
   return session;
 };
 
 // Проверить, является ли текущий юзер админом
-export const checkIsAdmin = async () => {
+const checkIsAdmin = async () => {
   const session = await getSession();
   if (!session) return false;
 
@@ -67,11 +67,9 @@ export const checkIsAdmin = async () => {
   return data.role === 'admin';
 };
 
-
 // --- API Событий (Events) ---
 
-export const getEvents = async () => {
-  // сортируем по дате убывания как было раньше
+const getEvents = async () => {
   const { data, error } = await supabaseClt
     .from('events')
     .select('*')
@@ -84,7 +82,7 @@ export const getEvents = async () => {
   return data;
 };
 
-export const addEvent = async (eventData) => {
+const addEvent = async (eventData) => {
   const { data, error } = await supabaseClt
     .from('events')
     .insert([eventData])
@@ -95,7 +93,7 @@ export const addEvent = async (eventData) => {
   return data;
 };
 
-export const updateEvent = async (id, eventData) => {
+const updateEvent = async (id, eventData) => {
   const { data, error } = await supabaseClt
     .from('events')
     .update(eventData)
@@ -107,7 +105,7 @@ export const updateEvent = async (id, eventData) => {
   return data;
 };
 
-export const deleteEvent = async (id) => {
+const deleteEvent = async (id) => {
   const { error } = await supabaseClt
     .from('events')
     .delete()
@@ -119,7 +117,7 @@ export const deleteEvent = async (id) => {
 
 // --- API Артистов (Artists) ---
 
-export const getArtists = async () => {
+const getArtists = async () => {
   const { data, error } = await supabaseClt
     .from('artists')
     .select('*')
@@ -132,7 +130,7 @@ export const getArtists = async () => {
   return data;
 };
 
-export const addArtist = async (artistData) => {
+const addArtist = async (artistData) => {
   const { data, error } = await supabaseClt
     .from('artists')
     .insert([artistData])
@@ -143,7 +141,7 @@ export const addArtist = async (artistData) => {
   return data;
 };
 
-export const updateArtist = async (id, artistData) => {
+const updateArtist = async (id, artistData) => {
   const { data, error } = await supabaseClt
     .from('artists')
     .update(artistData)
@@ -155,7 +153,7 @@ export const updateArtist = async (id, artistData) => {
   return data;
 };
 
-export const deleteArtist = async (id) => {
+const deleteArtist = async (id) => {
   const { error } = await supabaseClt
     .from('artists')
     .delete()
@@ -167,7 +165,7 @@ export const deleteArtist = async (id) => {
 
 // --- API Пользователей (Profiles / Users) ---
 
-export const getUsers = async () => {
+const getUsers = async () => {
   const { data, error } = await supabaseClt
     .from('profiles')
     .select('*')
@@ -180,7 +178,7 @@ export const getUsers = async () => {
   return data;
 };
 
-export const updateUserRole = async (id, newRole) => {
+const updateUserRole = async (id, newRole) => {
   const { data, error } = await supabaseClt
     .from('profiles')
     .update({ role: newRole })
@@ -194,7 +192,7 @@ export const updateUserRole = async (id, newRole) => {
 
 // --- API Релизов (Releases) ---
 
-export const getReleases = async () => {
+const getReleases = async () => {
   const { data, error } = await supabaseClt
     .from('releases')
     .select('*')
@@ -207,7 +205,7 @@ export const getReleases = async () => {
   return data;
 };
 
-export const addRelease = async (releaseData) => {
+const addRelease = async (releaseData) => {
   const { data, error } = await supabaseClt
     .from('releases')
     .insert([releaseData])
@@ -218,7 +216,7 @@ export const addRelease = async (releaseData) => {
   return data;
 };
 
-export const updateRelease = async (id, releaseData) => {
+const updateRelease = async (id, releaseData) => {
   const { data, error } = await supabaseClt
     .from('releases')
     .update(releaseData)
@@ -230,7 +228,7 @@ export const updateRelease = async (id, releaseData) => {
   return data;
 };
 
-export const deleteRelease = async (id) => {
+const deleteRelease = async (id) => {
   const { error } = await supabaseClt
     .from('releases')
     .delete()
@@ -242,7 +240,7 @@ export const deleteRelease = async (id) => {
 
 // --- API Подкастов (Podcasts) ---
 
-export const getPodcasts = async () => {
+const getPodcasts = async () => {
   const { data, error } = await supabaseClt
     .from('podcasts')
     .select('*')
@@ -255,7 +253,7 @@ export const getPodcasts = async () => {
   return data;
 };
 
-export const addPodcast = async (podcastData) => {
+const addPodcast = async (podcastData) => {
   const { data, error } = await supabaseClt
     .from('podcasts')
     .insert([podcastData])
@@ -266,7 +264,7 @@ export const addPodcast = async (podcastData) => {
   return data;
 };
 
-export const updatePodcast = async (id, podcastData) => {
+const updatePodcast = async (id, podcastData) => {
   const { data, error } = await supabaseClt
     .from('podcasts')
     .update(podcastData)
@@ -278,7 +276,7 @@ export const updatePodcast = async (id, podcastData) => {
   return data;
 };
 
-export const deletePodcast = async (id) => {
+const deletePodcast = async (id) => {
   const { error } = await supabaseClt
     .from('podcasts')
     .delete()
@@ -290,7 +288,7 @@ export const deletePodcast = async (id) => {
 
 // --- API Стримов (Streams) ---
 
-export const getStreams = async () => {
+const getStreams = async () => {
   const { data, error } = await supabaseClt
     .from('streams')
     .select('*')
@@ -303,7 +301,7 @@ export const getStreams = async () => {
   return data;
 };
 
-export const addStream = async (streamData) => {
+const addStream = async (streamData) => {
   const { data, error } = await supabaseClt
     .from('streams')
     .insert([streamData])
@@ -314,7 +312,7 @@ export const addStream = async (streamData) => {
   return data;
 };
 
-export const updateStream = async (id, streamData) => {
+const updateStream = async (id, streamData) => {
   const { data, error } = await supabaseClt
     .from('streams')
     .update(streamData)
@@ -326,7 +324,7 @@ export const updateStream = async (id, streamData) => {
   return data;
 };
 
-export const deleteStream = async (id) => {
+const deleteStream = async (id) => {
   const { error } = await supabaseClt
     .from('streams')
     .delete()
@@ -338,7 +336,7 @@ export const deleteStream = async (id) => {
 
 // --- API Мерча (Merch) ---
 
-export const getMerch = async () => {
+const getMerch = async () => {
   const { data, error } = await supabaseClt
     .from('merch')
     .select('*')
@@ -351,7 +349,7 @@ export const getMerch = async () => {
   return data;
 };
 
-export const addMerch = async (merchData) => {
+const addMerch = async (merchData) => {
   const { data, error } = await supabaseClt
     .from('merch')
     .insert([merchData])
@@ -362,7 +360,7 @@ export const addMerch = async (merchData) => {
   return data;
 };
 
-export const updateMerch = async (id, merchData) => {
+const updateMerch = async (id, merchData) => {
   const { data, error } = await supabaseClt
     .from('merch')
     .update(merchData)
@@ -374,7 +372,7 @@ export const updateMerch = async (id, merchData) => {
   return data;
 };
 
-export const deleteMerch = async (id) => {
+const deleteMerch = async (id) => {
   const { error } = await supabaseClt
     .from('merch')
     .delete()
@@ -386,7 +384,7 @@ export const deleteMerch = async (id) => {
 
 // --- STORAGE (ХРАНИЛИЩЕ) ---
 
-export const uploadImage = async (file) => {
+const uploadImage = async (file) => {
   if (!file) return null;
   // Генерируем уникальное имя файла
   const fileExt = file.name.split('.').pop();
@@ -407,13 +405,14 @@ export const uploadImage = async (file) => {
 };
 
 // Пустышка для обратной совместимости вызовов
-export const syncDefaultData = async () => {
+const syncDefaultData = async () => {
   // Больше не нужно копировать моки в localStorage
   return true;
 };
 
 // Делаем API доступным глобально, как и раньше
 window.dbLayer = {
+  supabaseClt, // На всякий случай добавил сам клиент сюда
   getEvents,
   addEvent,
   updateEvent,
