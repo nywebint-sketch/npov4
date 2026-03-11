@@ -1907,3 +1907,43 @@
     .toast.show {
       transform: translateX(-50%) translateY(0);
     }
+/* Обертка контента в модалке */
+.event-modal-wrap {
+  display: grid;
+  grid-template-columns: 300px 1fr; /* Левая колонка 300px (картинка), правая - всё остальное пространство */
+  gap: 20px;
+  align-items: start;
+}
+
+/* Настройки для картинки слева */
+.event-modal-left {
+  width: 100%;
+}
+
+.event-modal-left .media {
+  width: 100%;
+  border-radius: 8px; /* Скругление углов, если нужно */
+  overflow: hidden;
+}
+
+.event-modal-left .media img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Блок с кнопкой (растягиваем на всю ширину снизу) */
+.event-modal-actions {
+  grid-column: 1 / -1; /* Говорим блоку занять обе колонки */
+  display: flex;
+  justify-content: flex-end; /* Кнопка будет прижата к правому краю */
+  margin-top: 10px;
+}
+
+/* Мобильная версия: складываем блоки друг под друга на узких экранах */
+@media (max-width: 768px) {
+  .event-modal-wrap {
+    grid-template-columns: 1fr; /* Одна колонка */
+  }
+}
