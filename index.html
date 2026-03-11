@@ -58,12 +58,10 @@
 
   <main>
 
-    <!-- INTRO -->
     <section class="intro-start" id="home">
       <img class="intro-start-image" src="npo_print_source.png" alt="Изображение">
     </section>
 
-    <!-- EVENTS -->
     <section id="events">
       <div class="container">
         <div class="head">
@@ -76,7 +74,6 @@
       </div>
     </section>
 
-    <!-- ARTISTS -->
     <section id="artists">
       <div class="container">
         <div class="head">
@@ -98,7 +95,6 @@
       </div>
     </section>
 
-    <!-- RELEASES -->
     <section id="releases">
       <div class="container">
         <div class="head">
@@ -116,7 +112,6 @@
       </div>
     </section>
 
-    <!-- STREAMS -->
     <section id="streams">
       <div class="container">
         <div class="head">
@@ -138,7 +133,7 @@
             </div>
             <div class="divider" style="margin:0;"></div>
             <div class="pad">
-              <div class="media wide"><img src="smile.png" alt=""></div>
+              <div class="media wide"><img src="smile.png" alt="" loading="lazy"></div>
             </div>
           </div>
 
@@ -154,7 +149,6 @@
       </div>
     </section>
 
-    <!-- MERCH -->
     <section id="merch">
       <div class="container">
         <div class="head">
@@ -170,7 +164,6 @@
       </div>
     </section>
 
-    <!-- PROFILE -->
     <section id="profile">
       <div class="container">
         <div class="head">
@@ -241,7 +234,6 @@
       </div>
     </section>
 
-    <!-- CONTACTS -->
     <section id="contacts">
       <div class="container">
         <div class="head">
@@ -277,7 +269,6 @@
 
   </main>
 
-  <!-- MODAL -->
   <div id="modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-inner">
       <div class="modal-header">
@@ -291,7 +282,7 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
   <script type="module" src="db.js"></script>
   <script src="script.js" defer></script>
 
