@@ -3,7 +3,6 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>НПО Мелодия</title>
   <meta name="description"
@@ -46,6 +45,7 @@
       </div>
     </div>
   </header>
+
   <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" hidden></div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Мобильная навигация" hidden>
     <a href="#events">Афиша</a>
@@ -57,19 +57,15 @@
   </nav>
 
   <main>
-
     <section class="intro-start" id="home">
-      <img class="intro-start-image" src="npo_print_source.png" alt="Изображение">
+      <img class="intro-start-image" src="npo_print_source.png" alt="Изображение" fetchpriority="high">
     </section>
 
     <section id="events">
       <div class="container">
         <div class="head">
-          <div>
-            <h2>Афиша</h2>
-          </div>
+          <h2>Афиша</h2>
         </div>
-
         <div class="grid g4" id="eventsGrid"></div>
       </div>
     </section>
@@ -85,50 +81,41 @@
               aria-label="Поиск по артистам">
           </div>
         </div>
-
         <div class="card">
           <div class="pad">
             <div class="grid g4" id="artistsGrid"></div>
           </div>
         </div>
-
       </div>
     </section>
 
     <section id="releases">
       <div class="container">
         <div class="head">
-          <div>
-            <h2>Релизы</h2>
-          </div>
+          <h2>Релизы</h2>
         </div>
-
         <div class="card">
           <div class="pad">
             <div class="grid g4" id="releasesGrid"></div>
           </div>
         </div>
-
       </div>
     </section>
 
     <section id="streams">
       <div class="container">
         <div class="head">
-          <div>
-            <h2>Трансляции</h2>
-          </div>
+          <h2>Трансляции</h2>
           <div class="row">
-            <span class="pill" id="streamNext">Следующий эфир: Warehouse Night · 07.03.2026 23:00</span>
+            <span class="pill" id="streamNext">Загрузка эфиров...</span>
           </div>
         </div>
-
         <div class="grid g2">
           <div class="card">
             <div class="pad">
               <div class="row sp">
                 <b>Live</b>
-                <span class="tag">placeholder</span>
+                <span class="tag">Online</span>
               </div>
             </div>
             <div class="divider" style="margin:0;"></div>
@@ -136,11 +123,10 @@
               <div class="media wide"><img src="smile.png" alt="" loading="lazy"></div>
             </div>
           </div>
-
           <div class="card pad">
             <div class="row sp">
               <b>Архив</b>
-              <span class="tag">3 записи</span>
+              <span class="tag">Записи</span>
             </div>
             <div class="divider"></div>
             <div class="grid" id="streamsList"></div>
@@ -152,14 +138,11 @@
     <section id="merch">
       <div class="container">
         <div class="head">
-          <div>
-            <h2>Мерч</h2>
-          </div>
+          <h2>Мерч</h2>
           <div class="row">
             <span class="pill">оплата: позже</span>
           </div>
         </div>
-
         <div class="grid g4" id="merchGrid"></div>
       </div>
     </section>
@@ -167,16 +150,12 @@
     <section id="profile">
       <div class="container">
         <div class="head">
-          <div>
-            <h2>Профиль</h2>
-          </div>
+          <h2>Профиль</h2>
         </div>
-
         <div class="grid g2">
           <div class="card pad">
             <b>Аккаунт участника</b>
             <div class="divider"></div>
-
             <div id="authGuest" class="grid auth-forms">
               <form id="loginForm" class="auth-form">
                 <b>Вход</b>
@@ -184,51 +163,32 @@
                 <input class="input" name="password" type="password" placeholder="Пароль" required>
                 <button class="btn" type="submit">Войти</button>
               </form>
-
               <form id="registerForm" class="auth-form">
                 <b>Регистрация</b>
                 <input class="input" name="name" placeholder="Имя" required>
                 <input class="input" name="email" type="email" placeholder="Email" required>
-                <input class="input" name="password" type="password" placeholder="Пароль (мин. 6 символов)" required>
+                <input class="input" name="password" type="password" placeholder="Пароль" required>
                 <input class="input" name="password2" type="password" placeholder="Повтори пароль" required>
                 <button class="btn primary" type="submit">Создать аккаунт</button>
               </form>
             </div>
-
             <div id="authMember" class="auth-member" hidden>
               <div class="muted">Ты вошел как <b id="memberName">—</b>.</div>
               <div style="height:10px"></div>
               <button class="btn" id="logoutBtn" type="button">Выйти</button>
             </div>
-
             <div id="authStatus" class="muted auth-status">Доступ к эксклюзиву закрыт.</div>
           </div>
-
           <div class="card pad">
             <div class="row sp">
               <b>Эксклюзив</b>
               <span class="tag" id="exclusiveBadge">закрыт</span>
             </div>
             <div class="divider"></div>
-
             <div id="exclusiveLocked" class="muted">
-              Зарегистрируйся или войди, чтобы открыть закрытые релизы, архивы и ранний доступ к анонсам.
+              Войдите, чтобы открыть закрытые релизы и архивы.
             </div>
-
-            <div id="exclusiveContent" class="exclusive-list" hidden>
-              <div class="card pad">
-                <b>Early Access: NPO VA 002</b>
-                <div class="muted" style="margin-top:6px;">Превью треков + закрытый pre-save.</div>
-              </div>
-              <div class="card pad">
-                <b>Private Stream Archive</b>
-                <div class="muted" style="margin-top:6px;">Закрытые записи из ночных сетов.</div>
-              </div>
-              <div class="card pad">
-                <b>Members Promo Code</b>
-                <div class="muted" style="margin-top:6px;">Скидка 15% на мерч и закрытые дропы.</div>
-              </div>
-            </div>
+            <div id="exclusiveContent" class="exclusive-list" hidden></div>
           </div>
         </div>
       </div>
@@ -237,26 +197,19 @@
     <section id="contacts">
       <div class="container">
         <div class="head">
-          <div>
-            <h2>Контакты</h2>
-          </div>
+          <h2>Контакты</h2>
         </div>
-
         <div class="grid g2">
           <div class="card pad">
             <b>НПО Мелодия</b>
             <div class="divider"></div>
-            <div class="row"><span class="tag">Адрес</span><span class="muted">Paris, test street 12</span></div>
-            <div style="height:10px"></div>
             <div class="row"><span class="tag">Букинг</span><span class="muted">booking@npo-melodiya.test</span></div>
             <div style="height:10px"></div>
             <div class="row"><span class="tag">Пресса</span><span class="muted">press@npo-melodiya.test</span></div>
             <div class="divider"></div>
             <div class="row">
-              <a class="btn" href="#" data-placeholder-link="Поставь ссылку">Telegram</a>
-              <a class="btn" href="https://www.instagram.com/npo_melody/" target="_blank"
-                rel="noopener noreferrer">Instagram</a>
-              <a class="btn" href="#" data-placeholder-link="Поставь ссылку">SoundCloud</a>
+              <a class="btn" href="#">Telegram</a>
+              <a class="btn" href="https://www.instagram.com/npo_melody/" target="_blank">Instagram</a>
             </div>
           </div>
         </div>
@@ -264,12 +217,11 @@
     </section>
 
     <footer>
-      <div class="container">© <span id="year">2026</span> НПО Мелодия · тестовый прототип</div>
+      <div class="container">© <span id="year">2026</span> НПО Мелодия · v4.0</div>
     </footer>
-
   </main>
 
-  <div id="modal" class="modal-overlay" aria-hidden="true">
+  <div id="modal" class="modal-overlay" aria-hidden="true" style="display:none;">
     <div class="modal-inner">
       <div class="modal-header">
         <div class="modal-header-text">
@@ -282,11 +234,9 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
-  <script type="module" src="db.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="db.js"></script>
   <script src="script.js" defer></script>
-
-
 </body>
 
 </html>
