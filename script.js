@@ -144,27 +144,58 @@ const openMobileMenu = () => {
 
 // --- МОДАЛЬНЫЕ ОКНА (ЛОГИКА) ---
 const modal = $("#modal");
+
 const openModal = ({ title, sub, body }) => {
   if ($("#mTitle")) $("#mTitle").textContent = title || "—";
   if ($("#mSub")) $("#mSub").textContent = sub || "";
   if ($("#mBody")) $("#mBody").replaceChildren(body || "");
-  if (modal) modal.style.display = "flex";
+  
+  if (modal) {
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false"); // Даем сигнал CSS, что окно активно
+    // modal.classList.add("active"); // Раскомментируй эту строку, если для открытия в CSS нужен спец. класс
+  }
 };
 
-$("#mClose")?.addEventListener("click", () => { if (modal) modal.style.display = "none"; });
+$("#mClose")?.addEventListener("click", () => {
+  if (modal) {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    // modal.classList.remove("active");
+  }
+});
 
 document.addEventListener("click", (e) => {
   const card = e.target.closest("[data-open]");
   if (!card) return;
+
   const { open: type, id } = card.dataset;
-  const item = data[type + 's']?.find(x => x.id == id);
-  if (!item) return;
+
+  // Надежный маппинг вместо хитростей с добавлением 's'
+  const typeToKey = {
+    'event': 'events',
+    'artist': 'artists',
+    'release': 'releases',
+    'stream': 'streams',
+    'merch': 'merch', // Теперь клик по мерчу не будет ломать скрипт!
+    'podcast': 'podcasts'
+  };
+
+  const dataKey = typeToKey[type];
+  const item = data[dataKey]?.find(x => x.id == id);
+
+  // Добавим лог, чтобы точно знать, если карточка пустая
+  if (!item) {
+    console.error(`Элемент не найден: тип=${type}, id=${id}. Проверь, есть ли он в Supabase.`);
+    return;
+  }
 
   if (type === 'event') {
     openModal({ title: item.title, sub: fmtDT(item.date), body: el("div", { text: item.about || "Описание отсутствует" }) });
   } else if (type === 'artist') {
     openModal({ title: item.name, sub: item.role, body: el("div", { text: item.bio || "Биография отсутствует" }) });
   } else {
+    // Для релизов, стримов и мерча (пока ты не написал для них свою верстку)
     openModal({ title: item.title, sub: "", body: el("div", { text: "Детали скоро появятся" }) });
   }
 });
