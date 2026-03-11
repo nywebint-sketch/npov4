@@ -1,437 +1,89 @@
 /**
- * Слой абстракции данных (Data Layer).
- * ИНТЕГРАЦИЯ SUPABASE
+ * Слой данных (Data Layer) — Supabase Integration
  */
-// Supabase JS клиент загружается глобально через CDN в index.html и admin.html
-// window.supabase - это глобальный объект клиента
-
 const SUPABASE_URL = 'https://rvswpgsxutfcpgvmzonr.supabase.co';
-// ИСПРАВЛЕНИЕ 1: Убрана лишняя строчка и кавычка в ключе
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2c3dwZ3N4dXRmY3Bndm16b25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ1MTEsImV4cCI6MjA4ODY2MDUxMX0.I_XagunD2zgTVmpaOrt4SvbJbJFHAJAd2j7JpYb26oY';
 
-// Инициализация Supabase клиента (объект supabaseClt)
-// ИСПРАВЛЕНИЕ 2: Убрано слово 'export' везде
-const supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let supabaseClt = null;
 
-// --- АВТОРИЗАЦИЯ (AUTH) ---
-
-const register = async (email, password, name) => {
-  const { data, error } = await supabaseClt.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { name } // передаем имя в metadata
-    }
-  });
-  if (error) throw error;
-  return data;
+// Инициализация клиента
+const initSupabase = () => {
+  if (!window.supabase) return null;
+  if (!supabaseClt) {
+    supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabaseClt;
 };
 
-const login = async (email, password) => {
-  const { data, error } = await supabaseClt.auth.signInWithPassword({
-    email,
-    password
-  });
-  if (error) throw error;
-  return data;
+// Функции-обертки с проверкой инициализации
+const getEvents = async () => {
+  const client = initSupabase();
+  if (!client) return [];
+  const { data, error } = await client.from('events').select('*').order('date', { ascending: true });
+  return error ? [] : data;
 };
 
-const logout = async () => {
-  const { error } = await supabaseClt.auth.signOut();
-  if (error) throw error;
+const getArtists = async () => {
+  const client = initSupabase();
+  if (!client) return [];
+  const { data, error } = await client.from('artists').select('*').order('name', { ascending: true });
+  return error ? [] : data;
+};
+
+const getReleases = async () => {
+  const client = initSupabase();
+  if (!client) return [];
+  const { data, error } = await client.from('releases').select('*').order('date', { ascending: false });
+  return error ? [] : data;
+};
+
+const getPodcasts = async () => {
+  const client = initSupabase();
+  if (!client) return [];
+  const { data, error } = await client.from('podcasts').select('*').order('date', { ascending: false });
+  return error ? [] : data;
+};
+
+const getStreams = async () => {
+  const client = initSupabase();
+  if (!client) return [];
+  const { data, error } = await client.from('streams').select('*').order('date', { ascending: false });
+  return error ? [] : data;
+};
+
+const getMerch = async () => {
+  const client = initSupabase();
+  if (!client) return [];
+  const { data, error } = await client.from('merch').select('*').order('title', { ascending: true });
+  return error ? [] : data;
 };
 
 const getSession = async () => {
-  const { data: { session }, error } = await supabaseClt.auth.getSession();
-  if (error) throw error;
+  const client = initSupabase();
+  if (!client) return null;
+  const { data: { session } } = await client.auth.getSession();
   return session;
 };
 
-// Проверить, является ли текущий юзер админом
-const checkIsAdmin = async () => {
-  const session = await getSession();
-  if (!session) return false;
-
-  const { data, error } = await supabaseClt
-    .from('profiles')
-    .select('role')
-    .eq('id', session.user.id)
-    .single();
-
-  if (error) {
-    console.error("checkIsAdmin error:", error);
-    // ВРЕМЕННЫЙ ХАК: если это наш админ, пускаем даже если RLS блокирует
-    if (session.user.email === 'deliacorona@gmail.com') return true;
-    return false;
-  }
-  return data.role === 'admin';
+const login = async (email, password) => {
+  const client = initSupabase();
+  return await client.auth.signInWithPassword({ email, password });
 };
 
-// --- API Событий (Events) ---
-
-const getEvents = async () => {
-  const { data, error } = await supabaseClt
-    .from('events')
-    .select('*')
-    .order('date', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching events:', error);
-    return [];
-  }
-  return data;
+const register = async (email, password, name) => {
+  const client = initSupabase();
+  return await client.auth.signUp({ email, password, options: { data: { name } } });
 };
 
-const addEvent = async (eventData) => {
-  const { data, error } = await supabaseClt
-    .from('events')
-    .insert([eventData])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+const logout = async () => {
+  const client = initSupabase();
+  return await client.auth.signOut();
 };
 
-const updateEvent = async (id, eventData) => {
-  const { data, error } = await supabaseClt
-    .from('events')
-    .update(eventData)
-    .eq('id', id)
-    .select()
-    .single();
+const syncDefaultData = async () => true;
 
-  if (error) throw error;
-  return data;
-};
-
-const deleteEvent = async (id) => {
-  const { error } = await supabaseClt
-    .from('events')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw error;
-  return true;
-};
-
-// --- API Артистов (Artists) ---
-
-const getArtists = async () => {
-  const { data, error } = await supabaseClt
-    .from('artists')
-    .select('*')
-    .order('name', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching artists:', error);
-    return [];
-  }
-  return data;
-};
-
-const addArtist = async (artistData) => {
-  const { data, error } = await supabaseClt
-    .from('artists')
-    .insert([artistData])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const updateArtist = async (id, artistData) => {
-  const { data, error } = await supabaseClt
-    .from('artists')
-    .update(artistData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const deleteArtist = async (id) => {
-  const { error } = await supabaseClt
-    .from('artists')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw error;
-  return true;
-};
-
-// --- API Пользователей (Profiles / Users) ---
-
-const getUsers = async () => {
-  const { data, error } = await supabaseClt
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching profiles:', error);
-    return [];
-  }
-  return data;
-};
-
-const updateUserRole = async (id, newRole) => {
-  const { data, error } = await supabaseClt
-    .from('profiles')
-    .update({ role: newRole })
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-// --- API Релизов (Releases) ---
-
-const getReleases = async () => {
-  const { data, error } = await supabaseClt
-    .from('releases')
-    .select('*')
-    .order('date', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching releases:', error);
-    return [];
-  }
-  return data;
-};
-
-const addRelease = async (releaseData) => {
-  const { data, error } = await supabaseClt
-    .from('releases')
-    .insert([releaseData])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const updateRelease = async (id, releaseData) => {
-  const { data, error } = await supabaseClt
-    .from('releases')
-    .update(releaseData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const deleteRelease = async (id) => {
-  const { error } = await supabaseClt
-    .from('releases')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw error;
-  return true;
-};
-
-// --- API Подкастов (Podcasts) ---
-
-const getPodcasts = async () => {
-  const { data, error } = await supabaseClt
-    .from('podcasts')
-    .select('*')
-    .order('date', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching podcasts:', error);
-    return [];
-  }
-  return data;
-};
-
-const addPodcast = async (podcastData) => {
-  const { data, error } = await supabaseClt
-    .from('podcasts')
-    .insert([podcastData])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const updatePodcast = async (id, podcastData) => {
-  const { data, error } = await supabaseClt
-    .from('podcasts')
-    .update(podcastData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const deletePodcast = async (id) => {
-  const { error } = await supabaseClt
-    .from('podcasts')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw error;
-  return true;
-};
-
-// --- API Стримов (Streams) ---
-
-const getStreams = async () => {
-  const { data, error } = await supabaseClt
-    .from('streams')
-    .select('*')
-    .order('date', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching streams:', error);
-    return [];
-  }
-  return data;
-};
-
-const addStream = async (streamData) => {
-  const { data, error } = await supabaseClt
-    .from('streams')
-    .insert([streamData])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const updateStream = async (id, streamData) => {
-  const { data, error } = await supabaseClt
-    .from('streams')
-    .update(streamData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const deleteStream = async (id) => {
-  const { error } = await supabaseClt
-    .from('streams')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw error;
-  return true;
-};
-
-// --- API Мерча (Merch) ---
-
-const getMerch = async () => {
-  const { data, error } = await supabaseClt
-    .from('merch')
-    .select('*')
-    .order('title', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching merch:', error);
-    return [];
-  }
-  return data;
-};
-
-const addMerch = async (merchData) => {
-  const { data, error } = await supabaseClt
-    .from('merch')
-    .insert([merchData])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const updateMerch = async (id, merchData) => {
-  const { data, error } = await supabaseClt
-    .from('merch')
-    .update(merchData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-};
-
-const deleteMerch = async (id) => {
-  const { error } = await supabaseClt
-    .from('merch')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw error;
-  return true;
-};
-
-// --- STORAGE (ХРАНИЛИЩЕ) ---
-
-const uploadImage = async (file) => {
-  if (!file) return null;
-  // Генерируем уникальное имя файла
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-  const filePath = `${fileName}`;
-
-  const { error: uploadError } = await supabaseClt.storage
-    .from('images')
-    .upload(filePath, file);
-
-  if (uploadError) {
-    console.error('Ошибка загрузки картинки: ', uploadError);
-    throw uploadError;
-  }
-
-  const { data } = supabaseClt.storage.from('images').getPublicUrl(filePath);
-  return data.publicUrl;
-};
-
-// Пустышка для обратной совместимости вызовов
-const syncDefaultData = async () => {
-  // Больше не нужно копировать моки в localStorage
-  return true;
-};
-
-// Делаем API доступным глобально, как и раньше
+// Экспорт в глобальную область
 window.dbLayer = {
-  supabaseClt, // На всякий случай добавил сам клиент сюда
-  getEvents,
-  addEvent,
-  updateEvent,
-  deleteEvent,
-  getArtists,
-  addArtist,
-  updateArtist,
-  deleteArtist,
-  getUsers,
-  updateUserRole,
-  syncDefaultData,
-  register,
-  login,
-  logout,
-  getSession,
-  checkIsAdmin,
-  uploadImage,
-  getReleases, addRelease, updateRelease, deleteRelease,
-  getPodcasts, addPodcast, updatePodcast, deletePodcast,
-  getStreams, addStream, updateStream, deleteStream,
-  getMerch, addMerch, updateMerch, deleteMerch
+  getEvents, getArtists, getReleases, getPodcasts, getStreams, getMerch,
+  getSession, login, register, logout, syncDefaultData
 };
